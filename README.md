@@ -13,10 +13,10 @@
 
 ==== AKUN TESTING ===
 
-Akun Admin:
-username : admin
-password : admin123
+## Akun Admin:
+- username : admin
+- password : admin123
 
-User biasa:
-username : budi@gmail.com
-password : tamu123
+## User Tamu:
+- username : budi@gmail.com
+- password : tamu123
