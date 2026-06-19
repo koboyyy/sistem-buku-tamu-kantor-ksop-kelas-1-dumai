@@ -1,4 +1,4 @@
-==== CARA INSTALASI ===
+## CARA INSTALASI
 
 1. buka aplikasi git bash
 2. ketik : cd Desktop
@@ -11,12 +11,12 @@
 10. ketik: php artisan serve
 
 
-==== AKUN TESTING ===
+## AKUN TESTING
 
-## Akun Admin:
+### Akun Admin:
 - username : admin
 - password : admin123
 
-## User Tamu:
+### User Tamu:
 - username : budi@gmail.com
 - password : tamu123
