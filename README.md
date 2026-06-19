@@ -17,6 +17,6 @@
 - username : admin
 - password : admin123
 
-### User Tamu:
+### Akun Tamu:
 - username : budi@gmail.com
 - password : tamu123
