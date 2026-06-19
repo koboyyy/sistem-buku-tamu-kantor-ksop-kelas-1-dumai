@@ -1,0 +1,275 @@
+@extends ('admin.layouts.app')
+
+@section ('title', 'Laporan Kunjungan')
+@section ('page-title', 'Laporan Kunjungan')
+
+@section ('content')
+    <style>
+        @media print {
+            /* 1. Atur halaman landscape & margin kertas lebih kecil */
+            @page {
+                size: A4 landscape;
+                margin: 1cm;
+            }
+
+            /* 2. Sembunyikan elemen yang tidak perlu */
+            .no-print,
+            aside,
+            .sidebar,
+            .navbar,
+            header {
+                display: none !important;
+            }
+
+            /* 3. RESET MARGIN TEMPLATE ADMIN (SANGAT PENTING) */
+            /* Memaksa area konten memenuhi 100% kertas tanpa jarak dari bekas sidebar */
+            body,
+            .main-content,
+            .content-wrapper,
+            .app-content,
+            .container,
+            .container-fluid {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                position: static !important;
+            }
+
+            /* 4. Matikan efek scroll pada table-responsive agar tidak memotong tabel */
+            .table-responsive {
+                overflow: visible !important;
+            }
+
+            /* 5. Perkecil ukuran huruf dan jarak (padding) dalam tabel */
+            table.table {
+                width: 100% !important;
+                font-size: 8pt !important; /* Diperkecil agar 10 kolom muat */
+            }
+
+            table.table th,
+            table.table td {
+                padding: 4px 6px !important; /* Jarak dalam sel dipersempit */
+                white-space: normal !important; /* Izinkan teks panjang turun ke bawah */
+                word-wrap: break-word !important;
+            }
+
+            /* 6. Atur batas kolom agar lebih rapi (Opsional, menyesuaikan isi) */
+            table.table th:nth-child(7), /* Kolom Bidang */
+        table.table td:nth-child(7),
+        table.table th:nth-child(8), /* Kolom Sub Bagian */
+        table.table td:nth-child(8) {
+                max-width: 120px !important;
+            }
+
+            /* 7. Hilangkan styling box dari card */
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+            }
+            .card-body {
+                padding: 0 !important;
+            }
+
+            /* 8. Paksa warna background (Kop surat & Badge) tetap tercetak */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* 9. Hindari baris terpotong di tengah halaman */
+            table tbody tr {
+                page-break-inside: avoid !important;
+                page-break-after: auto !important;
+            }
+
+            /* Memastikan blok tanda tangan tidak terbelah ke halaman berikutnya */
+            .signature-block {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+        }
+    </style>
+    <div class="card shadow-sm mb-4 no-print">
+        <div class="card-body py-3">
+            <form method="GET" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label
+                        class="form-label small fw-semibold mb-1"
+                        style="color: var(--navy-primary)"
+                        >Dari Tanggal</label
+                    >
+                    <input
+                        type="date"
+                        name="dari"
+                        class="form-control"
+                        value="{{ request('dari') }}"
+                    />
+                </div>
+                <div class="col-md-3">
+                    <label
+                        class="form-label small fw-semibold mb-1"
+                        style="color: var(--navy-primary)"
+                        >Sampai Tanggal</label
+                    >
+                    <input
+                        type="date"
+                        name="sampai"
+                        class="form-control"
+                        value="{{ request('sampai') }}"
+                    />
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-navy w-100">
+                        <i class="bi bi-search me-1"></i> Tampilkan Data
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <div class="d-flex gap-2">
+                        <a
+                            href="{{ route('admin.laporan') }}"
+                            class="btn btn-light border flex-grow-1"
+                            >Reset</a
+                        >
+                        <button
+                            type="button"
+                            onclick="window.print()"
+                            class="btn btn-navy-outline flex-grow-1"
+                        >
+                            <i class="bi bi-printer me-1"></i> Cetak
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-5">
+            <div class="text-center mb-5">
+                <h5
+                    class="fw-bold mb-1 text-uppercase"
+                    style="color: var(--navy-primary)"
+                >
+                    Laporan Kunjungan Tamu
+                </h5>
+                <h6 class="text-muted mb-2" style="font-size: 0.9rem">
+                    Kantor Kesyahbandaran dan Otoritas Pelabuhan Kelas I Dumai
+                </h6>
+                <div
+                    style="
+                        height: 3px;
+                        width: 80px;
+                        background: linear-gradient(
+                            90deg,
+                            var(--navy-primary),
+                            var(--navy-accent)
+                        );
+                        margin: 10px auto;
+                    "
+                ></div>
+                @if (request('dari') && request('sampai'))
+                    <p class="text-muted mb-0" style="font-size: 0.85rem">
+                        Periode: {{ \Carbon\Carbon::parse(request('dari'))->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse(request('sampai'))->format('d/m/Y') }}
+                    </p>
+                @endif
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle">
+                    <thead>
+                        <tr class="text-center text-nowrap">
+                            <th style="width: 40px">No</th>
+                            <th>Antrian</th>
+                            <th>Nama Tamu</th>
+                            <th>Instansi</th>
+                            <th>Tanggal</th>
+                            <th>Jam Kedatangan</th>
+                            <th>Bidang</th>
+                            <th>Sub Bagian</th>
+                            <th>Keperluan</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($kunjungans as $i => $k)
+                            <tr>
+                                <td class="text-center">{{ $i + 1 }}</td>
+                                <td class="text-center fw-bold">
+                                    <span class="badge badge-navy"
+                                        >#{{ $k->nomor_antrian }}</span
+                                    >
+                                </td>
+                                <td>{{ $k->tamu->nama ?? '-' }}</td>
+                                <td>{{ $k->tamu->instansi ?? '-' }}</td>
+                                <td class="text-nowrap text-center">
+                                    {{ \Carbon\Carbon::parse($k->tanggal_kunjungan)->format('d/m/Y') }}
+                                </td>
+
+                                <td class="text-center text-nowrap">
+                                    {{ $k->jam_masuk ? substr($k->jam_masuk, 0, 5) . ' WIB' : '-' }}
+                                </td>
+
+                                <td>
+                                    <small
+                                        >{{ $k->bidang->nama_bidang ?? '-' }}</small
+                                    >
+                                </td>
+
+                                <td>
+                                    <small
+                                        >{{ $k->subbagian->nama_subbagian ?? '-' }}</small
+                                    >
+                                </td>
+
+                                <td>{{ Str::limit($k->keperluan, 30) }}</td>
+                                <td class="text-center">
+                                    <span
+                                        class="text-uppercase small fw-bold"
+                                        >{{ $k->status_kunjungan }}</span
+                                    >
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td
+                                    colspan="10"
+                                    class="text-center py-4 text-muted"
+                                >
+                                    Data tidak ditemukan untuk periode ini.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: var(--navy-lighter)">
+                            <td
+                                colspan="9"
+                                class="text-end fw-bold py-3"
+                                style="color: var(--navy-primary)"
+                            >
+                                TOTAL KUNJUNGAN:
+                            </td>
+                            <td
+                                class="text-center fw-bold py-3"
+                                style="color: var(--navy-primary)"
+                            >
+                                {{ $kunjungans->count() }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Signature (print only) -->
+            <div class="row mt-5 d-none d-print-flex signature-block">
+                <div class="col-8"></div>
+                <div class="col-4 text-center">
+                    <p class="mb-5">Dumai, {{ now()->translatedFormat('d F Y') }}</p>
+                    <p class="mb-0 fw-bold"><u>Admin KSOP</u></p>
+                    <p>NIP. ...........................</p>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
