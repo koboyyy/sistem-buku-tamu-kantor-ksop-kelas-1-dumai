@@ -518,7 +518,8 @@
     ========================= -->
     <div
         id="confirmModal"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300"
+        style="opacity: 0; pointer-events: none;"
     >
         <!-- BACKDROP -->
         <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity duration-300"></div>
@@ -551,7 +552,8 @@
                         @csrf
                         <button
                             type="submit"
-                            class="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold rounded-2xl shadow-lg shadow-green-500/20 hover:shadow-green-500/35 hover:-translate-y-0.5 transition duration-300"
+                            class="w-full py-4 text-white font-bold rounded-2xl shadow-lg hover:-translate-y-0.5 transition duration-300"
+                            style="background: linear-gradient(to right, #16a34a, #10b981);"
                         >
                             Ya, Selesai
                         </button>
@@ -590,15 +592,19 @@
         function openConfirmModal(actionUrl) {
             modalForm.action = actionUrl;
             
-            // Show modal
-            modal.classList.remove('opacity-0', 'pointer-events-none');
+            // Show modal using inline styles to bypass uncompiled Tailwind classes
+            modal.style.opacity = '1';
+            modal.style.pointerEvents = 'auto';
             dialog.classList.remove('scale-90');
+            dialog.classList.add('scale-100');
             document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
             // Hide modal
-            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.style.opacity = '0';
+            modal.style.pointerEvents = 'none';
+            dialog.classList.remove('scale-100');
             dialog.classList.add('scale-90');
             document.body.style.overflow = '';
         }
