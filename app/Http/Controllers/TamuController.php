@@ -232,7 +232,8 @@ class TamuController extends Controller
 
         // ANTRIAN YANG SUDAH DILAYANI (GLOBAL)
         $sudahDilayani =
-            Kunjungan::whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
+            Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
+                ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
                 ->where('is_served', true)
                 ->latest('id_kunjungan')
                 ->take(10)
@@ -240,14 +241,16 @@ class TamuController extends Controller
 
         // ANTRIAN SAAT INI (GLOBAL)
         $current =
-            Kunjungan::whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
+            Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
+                ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
                 ->where('is_served', true)
                 ->latest('id_kunjungan')
                 ->first();
 
         // ANTRIAN MENUNGGU (GLOBAL)
         $belumDilayani =
-            Kunjungan::whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
+            Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
+                ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
                 ->where('is_served', false)
                 ->whereIn('status_kunjungan', ['diterima', 'pending'])
                 ->orderBy('id_kunjungan', 'asc')
@@ -256,9 +259,11 @@ class TamuController extends Controller
         if ($kunjungan->status_kunjungan === 'ditolak') {
             $estimasiSisa = 0;
         } else {
-            $estimasiSisa = Kunjungan::whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
+            $estimasiSisa = Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
+                ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
                 ->where('is_served', false)
                 ->whereIn('status_kunjungan', ['diterima', 'pending'])
+                ->where('id_kunjungan', '<', $kunjungan->id_kunjungan)
                 ->count();
         }
 
@@ -504,12 +509,14 @@ class TamuController extends Controller
         $tamu = Auth::guard('tamu')->user();
         $kunjungan = Kunjungan::where('id_tamu', $tamu->id_tamu)->findOrFail($id);
 
-        $current = Kunjungan::whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
+        $current = Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
+            ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
             ->where('is_served', true)
             ->latest('id_kunjungan')
             ->first();
 
-        $sudahDilayani = Kunjungan::whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
+        $sudahDilayani = Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
+            ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
             ->where('is_served', true)
             ->latest('id_kunjungan')
             ->take(10)
@@ -518,9 +525,11 @@ class TamuController extends Controller
         if ($kunjungan->status_kunjungan === 'ditolak') {
             $estimasiSisa = 0;
         } else {
-            $estimasiSisa = Kunjungan::whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
+            $estimasiSisa = Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
+                ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
                 ->where('is_served', false)
                 ->whereIn('status_kunjungan', ['diterima', 'pending'])
+                ->where('id_kunjungan', '<', $kunjungan->id_kunjungan)
                 ->count();
         }
 

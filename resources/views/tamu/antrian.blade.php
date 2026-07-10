@@ -179,7 +179,7 @@
                             <!-- SISA -->
                             <div class="flex justify-between">
                                 <span class="text-slate-600">
-                                    Estimasi Sisa
+                                    Sisa nomor antrian yang dilayani
                                 </span>
 
                                 <strong class="text-primary" id="estimasi-sisa">
