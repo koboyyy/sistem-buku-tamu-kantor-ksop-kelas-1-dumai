@@ -55,6 +55,9 @@ Route::middleware('auth:tamu')
         Route::get('/antrian/{id}/realtime', [TamuController::class, 'realtimeAntrian'])
             ->name('antrian.realtime');
 
+        Route::get('/antrian/{id}/sebelum', [TamuController::class, 'antrianSebelum'])
+            ->name('antrian.sebelum');
+
         // Riwayat
         Route::get('/riwayat', [TamuController::class, 'riwayat'])
             ->name('riwayat');

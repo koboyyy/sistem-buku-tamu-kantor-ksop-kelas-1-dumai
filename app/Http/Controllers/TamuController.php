@@ -258,13 +258,17 @@ class TamuController extends Controller
 
         if ($kunjungan->status_kunjungan === 'ditolak') {
             $estimasiSisa = 0;
+            $antrianSebelum = collect();
         } else {
-            $estimasiSisa = Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
+            $antrianSebelumQuery = Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
                 ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
                 ->where('is_served', false)
                 ->whereIn('status_kunjungan', ['diterima', 'pending'])
                 ->where('id_kunjungan', '<', $kunjungan->id_kunjungan)
-                ->count();
+                ->orderBy('nomor_antrian', 'asc');
+            
+            $estimasiSisa = $antrianSebelumQuery->count();
+            $antrianSebelum = $antrianSebelumQuery->get();
         }
 
         return view(
@@ -274,9 +278,37 @@ class TamuController extends Controller
                 'current',
                 'sudahDilayani',
                 'belumDilayani',
-                'estimasiSisa'
+                'estimasiSisa',
+                'antrianSebelum'
             )
         );
+    }
+
+    // =========================
+    // HALAMAN ANTRIAN SEBELUM
+    // =========================
+    public function antrianSebelum($id)
+    {
+        $tamu = Auth::guard('tamu')->user();
+
+        // DATA KUNJUNGAN TAMU
+        $kunjungan = Kunjungan::with(['bidang', 'subbagian'])
+            ->where('id_tamu', $tamu->id_tamu)
+            ->findOrFail($id);
+
+        if ($kunjungan->status_kunjungan === 'ditolak') {
+            $antrianSebelum = collect();
+        } else {
+            $antrianSebelum = Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
+                ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
+                ->where('is_served', false)
+                ->whereIn('status_kunjungan', ['diterima', 'pending'])
+                ->where('id_kunjungan', '<', $kunjungan->id_kunjungan)
+                ->orderBy('nomor_antrian', 'asc')
+                ->get();
+        }
+
+        return view('tamu.antrian-sebelum', compact('kunjungan', 'antrianSebelum'));
     }
 
     // =========================
@@ -524,13 +556,17 @@ class TamuController extends Controller
 
         if ($kunjungan->status_kunjungan === 'ditolak') {
             $estimasiSisa = 0;
+            $antrianSebelumArray = [];
         } else {
-            $estimasiSisa = Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
+            $antrianSebelumQuery = Kunjungan::where('id_subbagian', $kunjungan->id_subbagian)
                 ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
                 ->where('is_served', false)
                 ->whereIn('status_kunjungan', ['diterima', 'pending'])
                 ->where('id_kunjungan', '<', $kunjungan->id_kunjungan)
-                ->count();
+                ->orderBy('nomor_antrian', 'asc');
+            
+            $estimasiSisa = $antrianSebelumQuery->count();
+            $antrianSebelumArray = $antrianSebelumQuery->pluck('nomor_antrian')->toArray();
         }
 
         // Fresh retrieve to get latest status and is_served
@@ -541,6 +577,7 @@ class TamuController extends Controller
             'is_served' => (bool)$freshKunjungan->is_served,
             'current_nomor_antrian' => $current ? $current->nomor_antrian : '-',
             'estimasi_sisa' => $estimasiSisa,
+            'antrian_sebelum' => $antrianSebelumArray,
             'sudah_dilayani' => $sudahDilayani->pluck('nomor_antrian')->toArray(),
             'keterangan' => $freshKunjungan->keterangan,
         ]);
