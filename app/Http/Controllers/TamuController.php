@@ -138,6 +138,19 @@ class TamuController extends Controller
         $tamu =
             Auth::guard('tamu')->user();
 
+        // =========================
+        // SATU KUNJUNGAN PER HARI
+        // =========================
+        $existingKunjungan = Kunjungan::where('id_tamu', $tamu->id_tamu)
+            ->whereDate('tanggal_kunjungan', $request->tanggal_kunjungan)
+            ->first();
+
+        if ($existingKunjungan) {
+            return back()
+                ->withInput()
+                ->with('error', 'Satu akun pengunjung dalam satu hari hanya bisa membuat satu kunjungan.');
+        }
+
         // GENERATE NOMOR
         $nomorAntrian =
             Kunjungan::generateNomorAntrian(
@@ -520,6 +533,7 @@ class TamuController extends Controller
             'current_nomor_antrian' => $current ? $current->nomor_antrian : '-',
             'estimasi_sisa' => $estimasiSisa,
             'sudah_dilayani' => $sudahDilayani->pluck('nomor_antrian')->toArray(),
+            'keterangan' => $freshKunjungan->keterangan,
         ]);
     }
 }

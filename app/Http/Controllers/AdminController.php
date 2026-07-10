@@ -702,8 +702,9 @@ class AdminController extends Controller
         }
 
         $kunjungans =
-            $query->latest(
-                'tanggal_kunjungan'
+            $query->orderBy(
+                'tanggal_kunjungan',
+                'asc'
             )->get();
 
         return view(

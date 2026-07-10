@@ -1,10 +1,118 @@
 @extends ('admin.layouts.app')
 
 @section ('title', 'Laporan Kunjungan')
-@section ('page-title', 'Laporan Kunjungan')
+@section('page-title', 'Laporan Kunjungan')
 
 @section ('content')
     <style>
+
+.kop-laporan {
+    position:relative;
+    border-bottom:3px solid #003b73;
+    padding-bottom:20px;
+    margin-bottom:25px;
+    text-align:center;
+}
+
+
+.kop-logo {
+    position:absolute;
+    left:0;
+    top:-5px;
+}
+
+
+.kop-logo img {
+    width: 60px;
+}
+
+
+.kop-text {
+    text-align:center;
+}
+
+.kop-text h3 {
+    margin:0 0 8px 0;
+    color:#003b73;
+    font-weight:bold;
+}
+
+.kop-text h4 {
+    margin:3px;
+    color:#003b73;
+    font-weight:bold;
+}
+
+.kop-text p {
+    margin:5px;
+    font-size:14px;
+}
+
+
+.stat-box {
+    display:flex;
+    gap:15px;
+    width:100%;
+    margin-bottom:20px;
+}
+
+
+.stat-item {
+    flex:1;
+    height:95px;
+    color:white;
+    text-align:center;
+    padding:10px;
+    border-radius:10px;
+}
+
+
+.stat-icon {
+    font-size:22px;
+    margin-bottom:3px;
+}
+
+
+.stat-item h4 {
+    margin:0;
+    font-size:24px;
+}
+
+
+.stat-item small {
+    font-size:13px;
+}
+
+
+.stat-total {
+    background:#00509d;
+}
+
+
+.stat-diterima {
+    background:#16a34a;
+}
+
+
+.stat-proses {
+    background:#eab308;
+}
+
+
+.stat-ditolak {
+    background:#dc2626;
+}
+
+
+.info-cetak{
+
+    font-size:16px;
+    font-weight:600;
+    line-height:2;
+    margin-top:15px;
+    margin-bottom:20px;
+
+}
         @media print {
             /* 1. Atur halaman landscape & margin kertas lebih kecil */
             @page {
@@ -146,35 +254,120 @@
     </div>
     <div class="card shadow-sm border-0">
         <div class="card-body p-5">
-            <div class="text-center mb-5">
-                <h5
-                    class="fw-bold mb-1 text-uppercase"
-                    style="color: var(--navy-primary)"
-                >
-                    Laporan Kunjungan Tamu
-                </h5>
-                <h6 class="text-muted mb-2" style="font-size: 0.9rem">
-                    Kantor Kesyahbandaran dan Otoritas Pelabuhan Kelas I Dumai
-                </h6>
-                <div
-                    style="
-                        height: 3px;
-                        width: 80px;
-                        background: linear-gradient(
-                            90deg,
-                            var(--navy-primary),
-                            var(--navy-accent)
-                        );
-                        margin: 10px auto;
-                    "
-                ></div>
-                @if (request('dari') && request('sampai'))
-                    <p class="text-muted mb-0" style="font-size: 0.85rem">
-                        Periode: {{ \Carbon\Carbon::parse(request('dari'))->format('d/m/Y') }} s/d {{ \Carbon\Carbon::parse(request('sampai'))->format('d/m/Y') }}
-                    </p>
-                @endif
-            </div>
+            <div class="kop-laporan">
 
+    <div class="kop-logo">
+
+        <img src="{{ asset('logo-ksop-kelas-1-dumai.png') }}">
+
+    </div>
+
+
+    <div class="kop-text">
+
+
+        <h3>
+            LAPORAN KUNJUNGAN TAMU
+        </h3>
+
+
+        <h4>
+            KANTOR KESYAHBANDARAN DAN OTORITAS PELABUHAN
+        </h4>
+
+
+        <h4>
+            KELAS I DUMAI
+        </h4>
+
+
+        <p>
+            Jl. Yos Sudarso No. 1, Kel. Buluh Kasap, Kec. Dumai Timur
+        </p>
+
+
+        <p>
+            Kota Dumai, Provinsi Riau - 28826
+        </p>
+
+
+    </div>
+</div>
+                
+                @if (request('dari') && request('sampai'))
+    <p class="text-muted mb-0" style="font-size: 0.85rem">
+        Periode: {{ \Carbon\Carbon::parse(request('dari'))->format('d/m/Y') }} 
+        s/d 
+        {{ \Carbon\Carbon::parse(request('sampai'))->format('d/m/Y') }}
+    </p>
+@endif
+
+
+<!-- Statistik Kunjungan -->
+<!-- STATISTIK -->
+<div class="stat-box">
+
+    <div class="stat-item stat-total">
+        <div class="stat-icon">👥</div>
+        <h4>{{ $kunjungans->count() }}</h4>
+        <small>Total Kunjungan</small>
+    </div>
+
+
+    <div class="stat-item stat-diterima">
+        <div class="stat-icon">✔</div>
+        <h4>
+            {{ $kunjungans->filter(function($item){
+                return trim(strtolower($item->status_kunjungan)) == 'diterima';
+            })->count() }}
+        </h4>
+        <small>Diterima</small>
+    </div>
+
+
+    <div class="stat-item stat-proses">
+        <div class="stat-icon">⏳</div>
+        <h4>
+            {{ $kunjungans->filter(function($item){
+                return trim(strtolower($item->status_kunjungan)) == 'proses';
+            })->count() }}
+        </h4>
+        <small>Proses</small>
+    </div>
+
+
+    <div class="stat-item stat-ditolak">
+        <div class="stat-icon">✖</div>
+        <h4>
+            {{ $kunjungans->filter(function($item){
+                return trim(strtolower($item->status_kunjungan)) == 'ditolak';
+            })->count() }}
+        </h4>
+        <small>Ditolak</small>
+    </div>
+
+</div>
+
+
+<!-- INFO CETAK DI BAWAH -->
+<div class="info-cetak">
+
+    <div>
+        📅 Tanggal Cetak :
+        {{ now()->translatedFormat('d F Y') }}
+    </div>
+
+    <div>
+        🕒 Jam Cetak :
+        {{ now()->format('H:i') }} WIB
+    </div>
+
+    <div>
+        👤 Dicetak Oleh :
+        Administrator
+    </div>
+
+</div>
             <div class="table-responsive">
                 <table class="table table-bordered table-striped align-middle">
                     <thead>

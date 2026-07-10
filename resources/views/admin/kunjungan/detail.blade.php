@@ -76,6 +76,16 @@
                         </h5>
 
                         <div class="row g-4">
+                            <!-- KEPERLUAN UTAMA -->
+                            <div class="col-md-12">
+                                <label class="form-label text-muted small fw-semibold">
+                                    Keperluan Utama
+                                </label>
+
+                            <div class="bg-light rounded-4 px-4 py-3 fw-semibold">
+                                {{ $kunjungan->keperluan ?? '-' }}
+                            </div>
+                        </div>
                             <!-- NAMA -->
                             <div class="col-md-6">
                                 <label

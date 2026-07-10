@@ -366,6 +366,12 @@
 
                                                  Ditolak
                                              </span>
+
+                                             @if($kunjungan->keterangan)
+                                                 <p class="text-xs text-red-600 mt-2 font-medium">
+                                                     Keterangan: {{ $kunjungan->keterangan }}
+                                                 </p>
+                                             @endif
                                          </div>
                                      @else
                                          <div
@@ -511,6 +517,7 @@
                                     <span class="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full text-sm font-bold mt-2">
                                         <i class="bi bi-x-circle"></i> Ditolak
                                     </span>
+                                    ${data.keterangan ? `<p class="text-xs text-red-600 mt-2 font-medium">Keterangan: ${data.keterangan}</p>` : ''}
                                 </div>
                             `;
                         } else {

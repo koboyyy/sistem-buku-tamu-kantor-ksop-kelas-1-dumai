@@ -200,50 +200,56 @@
                                     >
                                 </div>
 
-                                <div class="row g-3 mb-4">
-                                    <div class="col-md-6">
-                                        <label class="form-label"
-                                            >Password
-                                            <span class="text-danger"
-                                                >*</span
-                                            ></label
-                                        >
-                                        <div class="input-group">
-                                            <span class="input-group-text"
-                                                ><i class="bi bi-key"></i
-                                            ></span>
-                                            <input
-                                                type="password"
-                                                name="password"
-                                                class="form-control"
-                                                placeholder="Min. 6 Karakter"
-                                                required
-                                                minlength="6"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label"
-                                            >Konfirmasi Password
-                                            <span class="text-danger"
-                                                >*</span
-                                            ></label
-                                        >
-                                        <div class="input-group">
-                                            <span class="input-group-text"
-                                                ><i
-                                                    class="bi bi-shield-check"
-                                                ></i
-                                            ></span>
-                                            <input
-                                                type="password"
-                                                name="password_confirmation"
-                                                class="form-control"
-                                                placeholder="Ulangi Password"
-                                                required
-                                            />
-                                        </div>
-                                    </div>
+                                <div class="relative">
+    <label class="block mb-2 font-semibold text-slate-700">
+        Password *
+    </label>
+
+    <div class="relative">
+        <input
+            id="password"
+            type="password"
+            name="password"
+            placeholder="Min. 6 karakter"
+            class="w-full border border-slate-300 rounded-xl pl-12 pr-12 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition"
+            required
+        />
+
+        <!-- ICON LOCK -->
+        <i class="bi bi-key-fill absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+
+        <!-- TOGGLE EYE -->
+        <button type="button"
+            onclick="togglePassword('password','eye1')"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-blue-600">
+            <i id="eye1" class="bi bi-eye-slash-fill"></i>
+        </button>
+    </div>
+</div>
+                                    <div class="relative">
+    <label class="block mb-2 font-semibold text-slate-700">
+        Konfirmasi Password *
+    </label>
+
+    <div class="relative">
+        <input
+            id="password_confirmation"
+            type="password"
+            name="password_confirmation"
+            placeholder="Ulangi Password"
+            class="w-full border border-slate-300 rounded-xl pl-12 pr-12 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition"
+            required
+        />
+
+        <i class="bi bi-shield-lock-fill absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"></i>
+
+        <button type="button"
+            onclick="togglePassword('password_confirmation','eye2')"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-blue-600">
+            <i id="eye2" class="bi bi-eye-slash-fill"></i>
+        </button>
+    </div>
+</div>
                                 </div>
 
                                 <button
@@ -280,5 +286,21 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+function togglePassword(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("bi-eye-slash-fill");
+        icon.classList.add("bi-eye-fill");
+    } else {
+        input.type = "password";
+        icon.classList.remove("bi-eye-fill");
+        icon.classList.add("bi-eye-slash-fill");
+    }
+}
+</script>
 </body>
 </html>

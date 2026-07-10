@@ -252,7 +252,6 @@
                                 $date = \Carbon\Carbon::now('Asia/Jakarta');
                                 
                                 while(count($validDates) < 2) {
-                                    $date->addDay();
                                     // isWeekday() otomatis memfilter Sabtu dan Minggu
                                     if ($date->isWeekday()) {
                                         $validDates[] = [
@@ -261,6 +260,7 @@
                                             'dayOfWeek' => $date->dayOfWeekIso // 1 untuk Senin s/d 5 untuk Jumat
                                         ];
                                     }
+                                    $date->addDay();
                                 }
                             @endphp
 
@@ -406,6 +406,18 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if(session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Tidak Diizinkan',
+                text: '{{ session("error") }}',
+                confirmButtonColor: '#0f172a',
+            });
+        </script>
+    @endif
 
     <script>
         // 1. Logic Subbagian

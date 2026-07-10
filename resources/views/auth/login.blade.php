@@ -68,7 +68,7 @@
         <div class="relative hidden lg:block animate-fade-up">
             <!-- IMAGE -->
             <img
-                src="{{ asset('kantor-kasop-kelas-1-dumai.png') }}"
+                src="{{ asset('kantor-ksop-dumai.png') }}"
                 alt="Kantor KSOP"
                 class="w-full h-full min-h-screen object-cover"
             />
@@ -125,24 +125,21 @@
                 </div>
 
                 <!-- =========================
-                     ERROR
+                     ERROR NOTIFICATION
                 ========================= -->
 
                 @if ($errors->any())
-                    <div
-                        class="mb-6 bg-red-100 border border-red-200 text-red-700 px-5 py-4 rounded-2xl animate-fade-up"
-                    >
-                        <div class="flex items-start gap-3">
-                            <i
-                                class="bi bi-exclamation-circle-fill text-lg"
-                            ></i>
-
-                            <span class="leading-7">
-                                {{ $errors->first() }}
-                            </span>
-                        </div>
-                    </div>
-
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal Login',
+                                text: '{{ $errors->first() }}',
+                                confirmButtonColor: '#0f172a',
+                            });
+                        });
+                    </script>
                 @endif
 
                 <!-- =========================
@@ -164,7 +161,7 @@
                             Login Sistem
                         </h3>
 
-                        <p class="text-white/70 text-sm mt-2 leading-6">Admin dan tamu menggunakan satu portal login sistem.</p>
+                        <p class="text-white/70 text-sm mt-2 leading-6"></p>
                     </div>
 
                     <!-- BODY -->
@@ -186,7 +183,7 @@
 
                                 <div class="relative">
                                     <i
-                                        class="bi bi-person-fill absolute left-5 top-1/2 -translate-y-1/2 text-primary"
+                                        class="bi bi-person-fill absolute left-5 top-1/2 -translate-y-1/2 @error('login') text-red-500 @else text-primary @enderror"
                                     ></i>
 
                                     <input
@@ -194,33 +191,45 @@
                                         name="login"
                                         value="{{ old('login') }}"
                                         placeholder="Masukkan username atau email"
-                                        class="w-full border border-slate-300 rounded-2xl pl-14 pr-4 py-4 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition"
+                                        class="w-full border @error('login') border-red-500 focus:ring-red-500/10 focus:border-red-500 @else border-slate-300 focus:ring-primary/10 focus:border-primary @enderror rounded-2xl pl-14 pr-4 py-4 focus:outline-none focus:ring-4 transition"
                                         required
                                     />
                                 </div>
+                                @error('login')
+                                    <p class="text-red-500 text-sm mt-2 font-medium">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- PASSWORD -->
                             <div>
-                                <label
-                                    class="block mb-2 font-bold text-slate-700"
-                                >
+                                <label class="block mb-2 font-bold text-slate-700">
                                     Password
                                 </label>
 
                                 <div class="relative">
-                                    <i
-                                        class="bi bi-lock-fill absolute left-5 top-1/2 -translate-y-1/2 text-primary"
-                                    ></i>
+                                    <i class="bi bi-lock-fill absolute left-5 top-1/2 -translate-y-1/2 @error('password') text-red-500 @else text-primary @enderror"></i>
 
                                     <input
+                                        id="passwordInput"
                                         type="password"
                                         name="password"
                                         placeholder="Masukkan password"
-                                        class="w-full border border-slate-300 rounded-2xl pl-14 pr-4 py-4 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition"
+                                        class="w-full border @error('password') border-red-500 focus:ring-red-500/10 focus:border-red-500 @else border-slate-300 focus:ring-primary/10 focus:border-primary @enderror rounded-2xl pl-14 pr-12 py-4 focus:outline-none focus:ring-4 transition"
                                         required
                                     />
+
+                                    <!-- ICON EYE -->
+                                    <button
+                                        type="button"
+                                        onclick="togglePassword()"
+                                        class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-primary transition"
+                                    >
+                                        <i id="eyeIcon" class="bi bi-eye-slash-fill text-lg"></i>
+                                    </button>
                                 </div>
+                                @error('password')
+                                    <p class="text-red-500 text-sm mt-2 font-medium">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- BUTTON -->
@@ -265,5 +274,21 @@
             </div>
         </div>
     </div>
+    <script>
+    function togglePassword() {
+        const input = document.getElementById("passwordInput");
+        const icon = document.getElementById("eyeIcon");
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("bi-eye-slash-fill");
+            icon.classList.add("bi-eye-fill");
+        } else {
+            input.type = "password";
+            icon.classList.remove("bi-eye-fill");
+            icon.classList.add("bi-eye-slash-fill");
+        }
+    }
+</script>
 </body>
 </html>

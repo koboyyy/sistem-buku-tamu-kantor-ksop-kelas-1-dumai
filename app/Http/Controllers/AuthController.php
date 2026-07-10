@@ -38,24 +38,25 @@ class AuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        // =========================
-        // LOGIN TAMU
-        // =========================
-        if (
-            Auth::guard('tamu')->attempt([
-                'email' => $request->login,
-                'password' => $request->password
-            ])
-        ) {
+// =========================
+// LOGIN TAMU (email / nama)
+// =========================
+$tamu = Tamu::where('email', $request->login)
+            ->orWhere('nama', $request->login)
+            ->first();
 
-            $request->session()->regenerate();
+if ($tamu && Hash::check($request->password, $tamu->password)) {
 
-            return redirect()->route('tamu.dashboard');
-        }
+    Auth::guard('tamu')->login($tamu);
 
-        return back()->withErrors([
-            'login' => 'Username/email atau password salah.'
-        ]);
+    $request->session()->regenerate();
+
+    return redirect()->route('tamu.dashboard');
+}
+
+return back()->withErrors([
+    'login' => 'Nama atau kata sandi salah',
+])->withInput($request->only('login'));
     }
 
     // =========================
