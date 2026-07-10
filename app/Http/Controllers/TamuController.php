@@ -18,6 +18,8 @@ class TamuController extends Controller
 
     public function dashboard()
     {
+        \App\Models\Kunjungan::autoTolakExpired();
+
         $tamu = Auth::guard('tamu')->user();
 
         // =========================
@@ -211,6 +213,8 @@ class TamuController extends Controller
 
     public function antrian($id)
     {
+        \App\Models\Kunjungan::autoTolakExpired();
+
         $tamu =
             Auth::guard('tamu')->user();
 
@@ -289,6 +293,8 @@ class TamuController extends Controller
     // =========================
     public function antrianSebelum($id)
     {
+        \App\Models\Kunjungan::autoTolakExpired();
+
         $tamu = Auth::guard('tamu')->user();
 
         // DATA KUNJUNGAN TAMU
@@ -317,6 +323,8 @@ class TamuController extends Controller
 
     public function riwayat()
     {
+        \App\Models\Kunjungan::autoTolakExpired();
+
         $tamu =
             Auth::guard('tamu')->user();
 
@@ -345,6 +353,8 @@ class TamuController extends Controller
 
     public function monitorAntrian()
     {
+        \App\Models\Kunjungan::autoTolakExpired();
+
         $tamu =
             Auth::guard('tamu')->user();
 
@@ -538,6 +548,8 @@ class TamuController extends Controller
     // =========================
     public function realtimeAntrian($id)
     {
+        \App\Models\Kunjungan::autoTolakExpired();
+
         $tamu = Auth::guard('tamu')->user();
         $kunjungan = Kunjungan::where('id_tamu', $tamu->id_tamu)->findOrFail($id);
 

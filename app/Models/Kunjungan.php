@@ -50,6 +50,35 @@ class Kunjungan extends Model
         return $this->hasMany(LogStatus::class, 'id_kunjungan');
     }
 
+    // Auto tolak kunjungan yang sudah lewat tanggal dan jam
+    public static function autoTolakExpired()
+    {
+        $now = now();
+        $expired = self::where('status_kunjungan', 'pending')
+            ->where(function($query) use ($now) {
+                $query->whereDate('tanggal_kunjungan', '<', $now->toDateString())
+                      ->orWhere(function($sub) use ($now) {
+                          $sub->whereDate('tanggal_kunjungan', '=', $now->toDateString())
+                              ->whereTime('jam_masuk', '<=', $now->toTimeString());
+                      });
+            })
+            ->get();
+
+        foreach ($expired as $item) {
+            $item->update([
+                'status_kunjungan' => 'ditolak',
+                'keterangan' => 'Otomatis dibatalkan karena belum diverifikasi oleh admin hingga jam kunjungan yang ditentukan.'
+            ]);
+
+            \App\Models\LogStatus::create([
+                'id_kunjungan' => $item->id_kunjungan,
+                'id_admin' => 1, // Admin System
+                'status' => 'ditolak',
+                'waktu_update' => now(),
+            ]);
+        }
+    }
+
     // Generate nomor antrian otomatis
     public static function generateNomorAntrian($id_bidang, $id_subbagian, $tanggal_kunjungan = null)
     {

@@ -237,10 +237,11 @@
 
                                 <p class="mb-2">
                                     Admin harus memverifikasi kunjungan ini
-                                    sebelum tanggal:
+                                    sebelum waktu kedatangan tamu:
 
                                     <strong>
                                         {{ \Carbon\Carbon::parse($kunjungan->tanggal_kunjungan)->translatedFormat('d F Y') }}
+                                        jam {{ \Carbon\Carbon::parse($kunjungan->jam_masuk)->format('H:i') }} WIB
                                     </strong>
                                 </p>
 
@@ -265,7 +266,7 @@
                                     strtolower(
                                         $kunjungan->keterangan
                                     ),
-                                    'otomatis ditolak'
+                                    'otomatis dibatalkan'
                                 )
                             )
                                     <div

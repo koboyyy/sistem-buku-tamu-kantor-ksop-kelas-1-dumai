@@ -14,75 +14,6 @@ use App\Models\LogStatus;
 class AdminController extends Controller
 {
     // =========================
-    // AUTO TOLAK EXPIRED
-    // =========================
-
-    private function autoTolakExpired()
-    {
-        /**
-         * AMBIL SEMUA KUNJUNGAN
-         * YANG MASIH PENDING
-         * DAN SUDAH LEWAT TANGGAL
-         */
-
-        $expired = Kunjungan::where(
-            'status_kunjungan',
-            'pending'
-        )
-            ->whereDate(
-                'tanggal_kunjungan',
-                '<',
-                now()->toDateString()
-            )
-            ->get();
-
-        foreach ($expired as $item) {
-
-            /**
-             * SKIP JIKA SUDAH DITOLAK
-             */
-            if (
-                $item->status_kunjungan === 'ditolak'
-            ) {
-                continue;
-            }
-
-            /**
-             * UPDATE STATUS
-             */
-            $item->update([
-
-                'status_kunjungan' =>
-                    'ditolak',
-
-                'keterangan' =>
-                    'Otomatis ditolak karena melewati batas verifikasi admin.'
-
-            ]);
-
-            /**
-             * SIMPAN LOG
-             */
-            LogStatus::create([
-
-                'id_kunjungan' =>
-                    $item->id_kunjungan,
-
-                // ADMIN SYSTEM
-                'id_admin' =>
-                    1,
-
-                'status' =>
-                    'ditolak',
-
-                'waktu_update' =>
-                    now(),
-
-            ]);
-        }
-    }
-
-    // =========================
     // DASHBOARD
     // =========================
 
@@ -91,7 +22,7 @@ class AdminController extends Controller
         /**
          * AUTO CHECK EXPIRED
          */
-        $this->autoTolakExpired();
+        \App\Models\Kunjungan::autoTolakExpired();
 
         /**
          * TOTAL DATA
@@ -396,7 +327,7 @@ class AdminController extends Controller
          * AUTO CHECK EXPIRED 
          * (Opsional, agar status kunjungan tamu selalu update)
          */
-        $this->autoTolakExpired();
+        \App\Models\Kunjungan::autoTolakExpired();
 
         // Cari data tamu berdasarkan ID
         $tamu = Tamu::findOrFail($id);
@@ -434,7 +365,7 @@ class AdminController extends Controller
         /**
          * AUTO CHECK
          */
-        $this->autoTolakExpired();
+        \App\Models\Kunjungan::autoTolakExpired();
 
         $query =
             Kunjungan::with([
@@ -554,7 +485,7 @@ class AdminController extends Controller
         /**
          * AUTO CHECK
          */
-        $this->autoTolakExpired();
+        \App\Models\Kunjungan::autoTolakExpired();
 
         $kunjungan =
             Kunjungan::with([
