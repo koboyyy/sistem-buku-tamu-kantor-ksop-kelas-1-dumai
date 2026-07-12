@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Antrian Sebelum Anda - KSOP Dumai</title>
+    <title>Nomor Antrian Yang Sedang Berjalan - KSOP Dumai</title>
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
     @vite ('resources/css/app.css')
@@ -23,7 +23,7 @@
 </head>
 <body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen">
     <div class="min-h-screen flex items-center justify-center px-6 py-10">
-        <div class="w-full max-w-2xl">
+        <div class="w-full max-w-7xl">
             <!-- BACK BUTTON -->
             <div class="mb-6 animate-fade-up">
                 <a href="{{ route('tamu.antrian', $kunjungan->id_kunjungan) }}" class="inline-flex items-center gap-3 text-slate-600 hover:text-primary transition duration-300 font-semibold">
@@ -40,12 +40,12 @@
                     <div class="absolute -bottom-20 -left-10 w-52 h-52 bg-secondary/10 rounded-full"></div>
                     
                     <div class="relative z-10 w-24 h-24 mx-auto rounded-full bg-white flex items-center justify-center shadow-2xl mb-5">
-                        <i class="bi bi-people-fill text-5xl text-primary"></i>
+                        <i class="bi bi-display text-5xl text-primary"></i>
                     </div>
 
                     <div class="relative z-10">
-                        <h1 class="text-3xl font-extrabold mb-3">Antrian Sebelum Anda</h1>
-                        <p class="text-white/75 leading-7 max-w-md mx-auto">Daftar pengunjung yang sedang menunggu giliran sebelum nomor antrian Anda di bagian {{ $kunjungan->subbagian->nama_subbagian }}.</p>
+                        <h1 class="text-3xl font-extrabold mb-3">Nomor Antrian Yang Sedang Berjalan</h1>
+                        <p class="text-white/75 leading-7 max-w-md mx-auto">Daftar pengunjung yang sedang dilayani dan menunggu giliran sebelum nomor antrian Anda di bagian {{ $kunjungan->subbagian->nama_subbagian }}.</p>
                     </div>
                 </div>
 
@@ -61,17 +61,44 @@
                             </div>
                         </div>
 
-                        <div id="antrian-sebelum-container">
+                        <div id="antrian-sebelum-container" class="overflow-x-auto rounded-[20px] border-4 border-[#0B1B3D] shadow-2xl bg-[#0B1B3D]">
                             @if(isset($antrianSebelum) && $antrianSebelum->count() > 0)
-                                <div class="flex flex-wrap gap-3" id="antrian-sebelum-list">
-                                    @foreach($antrianSebelum as $as)
-                                        <div class="bg-blue-100 text-blue-700 px-5 py-3 rounded-2xl font-bold shadow-sm">
-                                            {{ $as->nomor_antrian }}
-                                        </div>
-                                    @endforeach
-                                </div>
+                                <table class="w-full text-left border-collapse min-w-[600px]">
+                                    <thead>
+                                        <tr class="bg-[#1a2d5c] text-blue-200 text-xs uppercase tracking-widest border-b-2 border-blue-800">
+                                            <th class="px-6 py-5 font-bold">No. Antrian</th>
+                                            <th class="px-6 py-5 font-bold">Waktu</th>
+                                            <th class="px-6 py-5 font-bold">Tujuan</th>
+                                            <th class="px-6 py-5 font-bold text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="antrian-sebelum-list">
+                                        @foreach($antrianSebelum as $index => $as)
+                                            <tr class="border-b border-[#1a2d5c] {{ $as->nomor_antrian == $kunjungan->nomor_antrian ? 'bg-purple-900/30' : '' }} hover:bg-white/5 transition duration-200">
+                                                <td class="px-6 py-5 whitespace-nowrap">
+                                                    <div class="flex items-center gap-3">
+                                                        <span class="font-black text-2xl text-white {{ $as->nomor_antrian == $kunjungan->nomor_antrian ? 'text-purple-300' : '' }} tracking-wider">{{ $as->nomor_antrian }}</span>
+                                                        @if($as->nomor_antrian == $kunjungan->nomor_antrian)
+                                                            <span class="text-[10px] bg-purple-500 text-white px-2 py-1 rounded uppercase font-bold tracking-widest shadow-md border border-purple-400">Nomor Anda</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-5 text-sm text-blue-100 font-medium whitespace-nowrap">{{ $as->jam_masuk }}</td>
+                                                <td class="px-6 py-5 text-sm text-blue-100 font-medium">{{ $as->subbagian->nama_subbagian ?? '-' }}</td>
+                                                <td class="px-6 py-5 text-center whitespace-nowrap">
+                                                    @if($index === 0)
+                                                        <span class="inline-block bg-green-500 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.5)] border border-green-400">Sedang Dilayani</span>
+                                                    @else
+                                                        <span class="inline-block bg-[#1a2d5c] text-blue-300 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest border border-[#2a4387]">Menunggu</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             @else
-                                <div class="bg-yellow-100 text-yellow-700 px-5 py-4 rounded-2xl text-center font-medium" id="antrian-sebelum-empty">
+                                <div class="bg-[#1a2d5c] text-blue-200 p-10 text-center font-medium" id="antrian-sebelum-empty">
+                                    <i class="bi bi-info-circle text-3xl block mb-3 text-blue-400"></i>
                                     Tidak ada antrian yang menunggu sebelum Anda.
                                 </div>
                             @endif
@@ -93,6 +120,7 @@
     <!-- REALTIME POLLING -->
     <script>
         const kunjunganId = {{ $kunjungan->id_kunjungan }};
+        const myNomor = "{{ $kunjungan->nomor_antrian }}";
         const realtimeUrl = "{{ route('tamu.antrian.realtime', $kunjungan->id_kunjungan) }}";
 
         function checkRealtimeQueue() {
@@ -102,15 +130,51 @@
                     const antrianSebelumContainerEl = document.getElementById('antrian-sebelum-container');
                     if (data.antrian_sebelum && antrianSebelumContainerEl) {
                         if (data.antrian_sebelum.length > 0) {
-                            let htmlList = '<div class="flex flex-wrap gap-3" id="antrian-sebelum-list">';
-                            data.antrian_sebelum.forEach(nomor => {
-                                htmlList += `<div class="bg-blue-100 text-blue-700 px-5 py-3 rounded-2xl font-bold shadow-sm">${nomor}</div>`;
+                            let htmlList = `
+                                <table class="w-full text-left border-collapse min-w-[600px]">
+                                    <thead>
+                                        <tr class="bg-[#1a2d5c] text-blue-200 text-xs uppercase tracking-widest border-b-2 border-blue-800">
+                                            <th class="px-6 py-5 font-bold">No. Antrian</th>
+                                            <th class="px-6 py-5 font-bold">Waktu</th>
+                                            <th class="px-6 py-5 font-bold">Tujuan</th>
+                                            <th class="px-6 py-5 font-bold text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="antrian-sebelum-list">
+                            `;
+                            data.antrian_sebelum.forEach((kunjungan, index) => {
+                                const isMyNomor = (kunjungan.nomor_antrian === myNomor);
+                                const trClass = `border-b border-[#1a2d5c] ${isMyNomor ? 'bg-purple-900/30' : ''} hover:bg-white/5 transition duration-200`;
+                                
+                                let nomorHtml = `
+                                    <div class="flex items-center gap-3">
+                                        <span class="font-black text-2xl text-white ${isMyNomor ? 'text-purple-300' : ''} tracking-wider">${kunjungan.nomor_antrian}</span>
+                                        ${isMyNomor ? '<span class="text-[10px] bg-purple-500 text-white px-2 py-1 rounded uppercase font-bold tracking-widest shadow-md border border-purple-400">Nomor Anda</span>' : ''}
+                                    </div>
+                                `;
+
+                                let statusHtml = '';
+                                if (index === 0) {
+                                    statusHtml = '<span class="inline-block bg-green-500 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.5)] border border-green-400">Sedang Dilayani</span>';
+                                } else {
+                                    statusHtml = '<span class="inline-block bg-[#1a2d5c] text-blue-300 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest border border-[#2a4387]">Menunggu</span>';
+                                }
+
+                                htmlList += `
+                                    <tr class="${trClass}">
+                                        <td class="px-6 py-5 whitespace-nowrap">${nomorHtml}</td>
+                                        <td class="px-6 py-5 text-sm text-blue-100 font-medium whitespace-nowrap">${kunjungan.jam_masuk}</td>
+                                        <td class="px-6 py-5 text-sm text-blue-100 font-medium">${kunjungan.tujuan}</td>
+                                        <td class="px-6 py-5 text-center whitespace-nowrap">${statusHtml}</td>
+                                    </tr>
+                                `;
                             });
-                            htmlList += '</div>';
+                            htmlList += '</tbody></table>';
                             antrianSebelumContainerEl.innerHTML = htmlList;
                         } else {
                             antrianSebelumContainerEl.innerHTML = `
-                                <div class="bg-yellow-100 text-yellow-700 px-5 py-4 rounded-2xl text-center font-medium" id="antrian-sebelum-empty">
+                                <div class="bg-[#1a2d5c] text-blue-200 p-10 text-center font-medium" id="antrian-sebelum-empty">
+                                    <i class="bi bi-info-circle text-3xl block mb-3 text-blue-400"></i>
                                     Tidak ada antrian yang menunggu sebelum Anda.
                                 </div>
                             `;

@@ -190,7 +190,7 @@
                             <!-- TOMBOL LIHAT ANTRIAN SEBELUM -->
                             <div class="mt-4 pt-4 border-t border-primary/10">
                                 <a href="{{ route('tamu.antrian.sebelum', $kunjungan->id_kunjungan) }}" class="block w-full py-2 bg-white text-center text-primary text-sm font-semibold rounded-xl border border-primary/20 hover:bg-primary/10 transition">
-                                    Lihat Antrian Sebelum Anda
+                                    Lihat Nomor Antrian Yang Sedang Di Layani
                                 </a>
                             </div>
                         </div>

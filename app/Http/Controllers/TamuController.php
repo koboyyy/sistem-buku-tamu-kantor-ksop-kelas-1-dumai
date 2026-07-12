@@ -268,7 +268,7 @@ class TamuController extends Controller
                 ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
                 ->where('is_served', false)
                 ->whereIn('status_kunjungan', ['diterima', 'pending'])
-                ->where('id_kunjungan', '<', $kunjungan->id_kunjungan)
+                ->where('id_kunjungan', '<=', $kunjungan->id_kunjungan)
                 ->orderBy('nomor_antrian', 'asc');
             
             $estimasiSisa = $antrianSebelumQuery->count();
@@ -309,7 +309,7 @@ class TamuController extends Controller
                 ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
                 ->where('is_served', false)
                 ->whereIn('status_kunjungan', ['diterima', 'pending'])
-                ->where('id_kunjungan', '<', $kunjungan->id_kunjungan)
+                ->where('id_kunjungan', '<=', $kunjungan->id_kunjungan)
                 ->orderBy('nomor_antrian', 'asc')
                 ->get();
         }
@@ -574,11 +574,17 @@ class TamuController extends Controller
                 ->whereDate('tanggal_kunjungan', $kunjungan->tanggal_kunjungan)
                 ->where('is_served', false)
                 ->whereIn('status_kunjungan', ['diterima', 'pending'])
-                ->where('id_kunjungan', '<', $kunjungan->id_kunjungan)
+                ->where('id_kunjungan', '<=', $kunjungan->id_kunjungan)
                 ->orderBy('nomor_antrian', 'asc');
             
             $estimasiSisa = $antrianSebelumQuery->count();
-            $antrianSebelumArray = $antrianSebelumQuery->pluck('nomor_antrian')->toArray();
+            $antrianSebelumArray = $antrianSebelumQuery->with('subbagian')->get()->map(function($k) {
+                return [
+                    'nomor_antrian' => $k->nomor_antrian,
+                    'jam_masuk' => $k->jam_masuk,
+                    'tujuan' => $k->subbagian ? $k->subbagian->nama_subbagian : '-'
+                ];
+            })->toArray();
         }
 
         // Fresh retrieve to get latest status and is_served
