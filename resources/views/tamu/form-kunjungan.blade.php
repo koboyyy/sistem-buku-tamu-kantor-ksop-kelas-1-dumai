@@ -263,6 +263,15 @@
                                 $validDates = [];
                                 $date = \Carbon\Carbon::now('Asia/Jakarta');
                                 
+                                // Cek apakah hari ini sudah melewati jam operasional
+                                if ($date->isWeekday()) {
+                                    $dayOfWeek = $date->dayOfWeekIso;
+                                    $maxTime = ($dayOfWeek == 5) ? '17:00' : '16:30';
+                                    if ($date->format('H:i') >= $maxTime) {
+                                        $date->addDay();
+                                    }
+                                }
+                                
                                 while(count($validDates) < 2) {
                                     // isWeekday() otomatis memfilter Sabtu dan Minggu
                                     if ($date->isWeekday()) {
