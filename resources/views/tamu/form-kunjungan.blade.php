@@ -129,6 +129,18 @@
         @endif
 
         <div
+            class="mb-6 bg-amber-50 border border-amber-200 text-amber-800 px-5 py-4 rounded-2xl animate-fade-up"
+        >
+            <div class="flex items-start gap-3">
+                <i class="bi bi-info-circle-fill text-lg text-amber-500"></i>
+                <div>
+                    <h3 class="font-bold mb-1">Informasi Penting</h3>
+                    <p class="text-sm">Setiap tamu hanya diperbolehkan membuat jadwal kunjungan maksimal <span class="font-bold">satu kali dalam sehari</span>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div
             class="bg-white rounded-[32px] shadow-xl border border-slate-100 overflow-hidden animate-fade-up delay-100"
         >
             <div
