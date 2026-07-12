@@ -138,10 +138,17 @@ class Kunjungan extends Model
         // Gabungkan Bidang dan Subbagian ke dalam satu Prefix
         $prefix = $bidangPrefix . ($subPrefix ? '-' . $subPrefix : '');
 
-        // Cari nomor antrian terakhir untuk bidang ini yang memiliki prefix tersebut secara global
-        $lastKunjungan = self::where('id_bidang', $id_bidang)
-            ->where('nomor_antrian', 'like', $prefix . '-%')
-            ->get()
+        // Cari nomor antrian terakhir untuk bidang ini yang memiliki prefix tersebut pada hari tersebut
+        $query = self::where('id_bidang', $id_bidang)
+            ->where('nomor_antrian', 'like', $prefix . '-%');
+
+        if ($tanggal_kunjungan) {
+            $query->whereDate('tanggal_kunjungan', $tanggal_kunjungan);
+        } else {
+            $query->whereDate('tanggal_kunjungan', date('Y-m-d'));
+        }
+
+        $lastKunjungan = $query->get()
             ->filter(function($k) {
                 return preg_match('/\d+$/', $k->nomor_antrian);
             })
